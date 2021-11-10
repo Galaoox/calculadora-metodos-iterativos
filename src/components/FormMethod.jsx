@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { parse } from "mathjs";
 import Select from "react-select";
+import FormLagrange from "./FormLagrange";
 
 const FormMethod = ({ getParams, clearTable }) => {
     const rulesFields = {
@@ -33,11 +34,14 @@ const FormMethod = ({ getParams, clearTable }) => {
 
     const [input2, setInput2] = useState(null);
 
+    const [coordenadas, setCoordenadas] = useState([]);
+
     const options = [
         { value: "biseccion", label: "Biseccion" },
         { value: "newton", label: "Newton Raphson" },
-        { value: "jacobi", label: "Jacobi" },
-        { value: "gauss", label: "Gauss - seides" },
+        // { value: "jacobi", label: "Jacobi" },
+        // { value: "gauss", label: "Gauss - seides" },
+        { value: "lagrange", label: "Polinomio de lagrange" },
     ];
 
     const handleChangeForm = (value, field) => {
@@ -65,20 +69,47 @@ const FormMethod = ({ getParams, clearTable }) => {
         });
     };
 
+    const getValuesCoordenadas = (values) => setCoordenadas(values);
+
+    const parseCordenas = () => {
+        return coordenadas.map((coordenada, index) => {
+            const ejes = coordenada.split(",");
+            if (ejes.length === 2) {
+                return {
+                    x: ejes[0],
+                    y: ejes[1],
+                };
+            } else {
+                throw "Formato de coordenadas incorrecto";
+            }
+        });
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        let validEquation = true;
-        try {
-            parse(form.equation);
-        } catch (error) {
-            validEquation = false;
-        }
-        if (validEquation) {
-            getParams({
-                ...form,
-                input1: Number(form.input1),
-                input2: Number(form.input2),
-            });
+        if (form.method.value === "lagrange") {
+            try {
+                getParams({
+                    coordenadas: parseCordenas(),
+                    method: form.method.value,
+                });
+            } catch (error) {
+                alert(error);
+            }
+        } else {
+            let validEquation = true;
+            try {
+                parse(form.equation);
+            } catch (error) {
+                validEquation = false;
+            }
+            if (validEquation) {
+                getParams({
+                    ...form,
+                    input1: Number(form.input1),
+                    input2: Number(form.input2),
+                });
+            }
         }
     };
 
@@ -98,24 +129,27 @@ const FormMethod = ({ getParams, clearTable }) => {
             <div className="card">
                 <div className="card-content">
                     <div className="content">
-                        <div className="field">
-                            <label className="label">Ecuacion</label>
-                            <div className="control">
-                                <input
-                                    className="input"
-                                    type="text"
-                                    placeholder="Ingrese la ecuacion"
-                                    value={form.equation}
-                                    onChange={(e) =>
-                                        handleChangeForm(
-                                            e.target.value,
-                                            "equation"
-                                        )
-                                    }
-                                    required
-                                />
+                        {form.method.value != "lagrange" && (
+                            <div className="field">
+                                <label className="label">Ecuacion</label>
+                                <div className="control">
+                                    <input
+                                        className="input"
+                                        type="text"
+                                        placeholder="Ingrese la ecuacion"
+                                        value={form.equation}
+                                        onChange={(e) =>
+                                            handleChangeForm(
+                                                e.target.value,
+                                                "equation"
+                                            )
+                                        }
+                                        required
+                                    />
+                                </div>
                             </div>
-                        </div>
+                        )}
+
                         <div className="field">
                             <label className="label">Metodo</label>
                             <div className="control">
@@ -175,6 +209,15 @@ const FormMethod = ({ getParams, clearTable }) => {
                                         />
                                     </div>
                                 </div>
+                            </>
+                        )}
+
+                        {form.method.value == "lagrange" && (
+                            <>
+                                <h1>test</h1>
+                                <FormLagrange
+                                    getValues={getValuesCoordenadas}
+                                />
                             </>
                         )}
                     </div>

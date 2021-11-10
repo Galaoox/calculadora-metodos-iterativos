@@ -7,6 +7,7 @@ import { calcIterationsBiseccion } from "./services/biseccionService";
 import TableBiseccion from "./components/TableBiseccion";
 import { calcIterationsNewton } from "./services/newtonService";
 import TableNewton from "./components/TableNewton";
+import calcLagrange from "./services/lagrangeService";
 
 function App() {
     const [iterations, setIterations] = useState([]);
@@ -25,6 +26,9 @@ function App() {
         } else if (params.method.value === "newton") {
             setMethod(params.method.value);
             setIterations(calcIterationsNewton(params.equation, params.input1));
+        } else if (params.method === "lagrange") {
+            setMethod(params.method);
+            calcLagrange(params.coordenadas);
         } else {
             setIterations([]);
             setMethod(null);
