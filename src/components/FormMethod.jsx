@@ -214,7 +214,6 @@ const FormMethod = ({ getParams, clearTable }) => {
 
                         {form.method.value == "lagrange" && (
                             <>
-                                <h1>test</h1>
                                 <FormLagrange
                                     getValues={getValuesCoordenadas}
                                 />

@@ -1,0 +1,36 @@
+/* style the HTML output */
+.math-function {
+    color: Purple;
+    font-weight: bold;
+}
+
+.math-number {
+    color: Blue;
+}
+
+.math-boolean {
+    color: Green;
+}
+
+.math-string {
+    color: Grey;
+}
+
+.math-string::before,
+.math-string::after {
+    content: '"';
+}
+
+.math-property {
+    font-style: italic;
+}
+
+.math-explicit-binary-operator::before,
+.math-explicit-binary-operator::after {
+    content: " ";
+}
+
+.math-separator::after,
+.math-assignment-operator::after {
+    content: " ";
+}

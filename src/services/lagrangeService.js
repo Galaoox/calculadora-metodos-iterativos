@@ -33,13 +33,25 @@ function calcPolinomio() {
     for (let index = 0; index < n; index++) {
         p.push(rationalize(`(${coordenadas[index]['y']}) * (${li[index]})`).toString());
     }
-    console.log(p);
-    console.log(rationalize(p.join(' + ')).toString());
+    let options = { parenthesis: 'keep', implicit: 'hide' }
+    return rationalize(p.join(' + ')).toHTML(options);
+    // console.log(rationalize(p.join(' + ')).toHTML(options));
+}
+
+function reset() {
+    n = 0;
+    i = [];
+    j = [];
+    coordenadas = [];
+    li = [];
 }
 
 export default function calcLagrange(initialValues) {
     getInitialValues(initialValues);
     calcLi();
-    calcPolinomio();
+    const result = calcPolinomio();
+    reset();
+    return result;
+
 }
 

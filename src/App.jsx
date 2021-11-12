@@ -12,6 +12,7 @@ import calcLagrange from "./services/lagrangeService";
 function App() {
     const [iterations, setIterations] = useState([]);
     const [method, setMethod] = useState(null);
+    const [htmlResult, sethtmlResult] = useState("");
 
     const getParams = (params) => {
         if (params.method.value === "biseccion") {
@@ -28,7 +29,7 @@ function App() {
             setIterations(calcIterationsNewton(params.equation, params.input1));
         } else if (params.method === "lagrange") {
             setMethod(params.method);
-            calcLagrange(params.coordenadas);
+            sethtmlResult(calcLagrange(params.coordenadas));
         } else {
             setIterations([]);
             setMethod(null);
@@ -59,25 +60,37 @@ function App() {
                     <FormMethod getParams={getParams} clearTable={clearTable} />
                 </div>
             </section>
+            {method === "lagrange" && (
+                <section className="footer">
+                    <h1 className="title">Resultado</h1>
+                    <div className="content ">
+                        <div
+                            dangerouslySetInnerHTML={{ __html: htmlResult }}
+                        ></div>
+                    </div>
+                </section>
+            )}
 
-            <section className="footer">
-                <h1 className="title">Tabla</h1>
-                <div className="content ">
-                    {method === "biseccion" && iterations.length > 0 && (
-                        <TableBiseccion iterations={iterations} />
-                    )}
+            {method !== "lagrange" && (
+                <section className="footer">
+                    <h1 className="title">Tabla</h1>
+                    <div className="content ">
+                        {method === "biseccion" && iterations.length > 0 && (
+                            <TableBiseccion iterations={iterations} />
+                        )}
 
-                    {method === "newton" && iterations.length > 0 && (
-                        <TableNewton iterations={iterations} />
-                    )}
+                        {method === "newton" && iterations.length > 0 && (
+                            <TableNewton iterations={iterations} />
+                        )}
 
-                    {(iterations?.length == 0 || !method) && (
-                        <p>
-                            <strong>No se hay datos</strong>
-                        </p>
-                    )}
-                </div>
-            </section>
+                        {(iterations?.length == 0 || !method) && (
+                            <p>
+                                <strong>No se hay datos</strong>
+                            </p>
+                        )}
+                    </div>
+                </section>
+            )}
         </div>
     );
 }
