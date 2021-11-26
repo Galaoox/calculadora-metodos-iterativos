@@ -4,6 +4,8 @@ let i = [];
 let j = [];
 let coordenadas = [];
 let li = [];
+let promedioY = 0;
+let valoresXEvaluados = [];
 
 function getInitialValues(initialValues) {
     coordenadas = initialValues;
@@ -33,9 +35,20 @@ function calcPolinomio() {
     for (let index = 0; index < n; index++) {
         p.push(rationalize(`(${coordenadas[index]['y']}) * (${li[index]})`).toString());
     }
-    let options = { parenthesis: 'keep', implicit: 'hide' }
-    return rationalize(p.join(' + ')).toHTML(options);
-    // console.log(rationalize(p.join(' + ')).toHTML(options));
+    return rationalize(p.join(' + '));
+}
+
+function calcularR2(polinomio) {
+    promedioY = coordenadas.reduce((sum, item) => sum + item.x, 0) / n;
+    valoresXEvaluados = coordenadas.map(item => polinomio.evaluate({ x: item.x }));
+    let yr = coordenadas.map((coordenada) => {
+        return (coordenada.y - promedioY) ** 2;
+    })
+    let yc = valoresXEvaluados.map((valor) => {
+        return (valor - promedioY) ** 2;
+    })
+
+    return (yr.reduce((sum, item) => sum + item, 0) / yc.reduce((sum, item) => sum + item, 0));
 }
 
 function reset() {
@@ -44,14 +57,20 @@ function reset() {
     j = [];
     coordenadas = [];
     li = [];
+    promedioY = 0;
+    valoresXEvaluados = [];
 }
 
 export default function calcLagrange(initialValues) {
     getInitialValues(initialValues);
     calcLi();
     const result = calcPolinomio();
+    const r2 = calcularR2(result);
     reset();
-    return result;
-
+    let options = { parenthesis: 'keep', implicit: 'hide' }
+    return {
+        polinomio: result.toHTML(options),
+        r2
+    };
 }
 

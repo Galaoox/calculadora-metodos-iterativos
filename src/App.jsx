@@ -65,7 +65,9 @@ function App() {
                     <h1 className="title">Resultado</h1>
                     <div className="content ">
                         <div
-                            dangerouslySetInnerHTML={{ __html: htmlResult }}
+                            dangerouslySetInnerHTML={{
+                                __html: htmlResult.polinomio,
+                            }}
                         ></div>
                     </div>
                 </section>

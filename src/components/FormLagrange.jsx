@@ -15,7 +15,7 @@ function FormLagrange({ getValues }) {
 
     const handleChangeCoordenadas = (event, index) => {
         const newCoordenadas = [...coordenadas];
-        newCoordenadas[index] = event;
+        newCoordenadas[index] = event.trim();
         setCoordenadas(newCoordenadas);
         getValues(newCoordenadas);
     };
