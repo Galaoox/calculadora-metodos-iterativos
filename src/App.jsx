@@ -8,11 +8,18 @@ import TableBiseccion from "./components/TableBiseccion";
 import { calcIterationsNewton } from "./services/newtonService";
 import TableNewton from "./components/TableNewton";
 import calcLagrange from "./services/lagrangeService";
+import calcAproximacion from "./services/aproximacionPolinomialService";
+import calcDiferencias from "./services/diferenciasDivididasService";
+
+import { TableLagrange } from "./components/TableLagrange";
+import { TableAproximacionPolinomial } from "./components/TableAproximacionPolinomial";
+import { TableDiferenciasDivididas } from "./components/TableDiferenciasDivididas";
 
 function App() {
     const [iterations, setIterations] = useState([]);
     const [method, setMethod] = useState(null);
-    const [htmlResult, sethtmlResult] = useState("");
+    const [resultCoordenadas, setresultCoordenadas] = useState("");
+    const [coordenadas, setCoordenadas] = useState([]);
 
     const getParams = (params) => {
         if (params.method.value === "biseccion") {
@@ -29,10 +36,22 @@ function App() {
             setIterations(calcIterationsNewton(params.equation, params.input1));
         } else if (params.method === "lagrange") {
             setMethod(params.method);
-            sethtmlResult(calcLagrange(params.coordenadas));
+            setresultCoordenadas(calcLagrange(params.coordenadas));
+            setCoordenadas(params.coordenadas);
+        } else if (params.method === "aproximacion") {
+            setMethod(params.method);
+            setresultCoordenadas(
+                calcAproximacion(params.coordenadas, params.input1)
+            );
+            setCoordenadas(params.coordenadas);
+        } else if (params.method === "diferencias") {
+            setMethod(params.method);
+            setresultCoordenadas(calcDiferencias());
+            setCoordenadas(params.coordenadas);
         } else {
             setIterations([]);
             setMethod(null);
+            setCoordenadas([]);
         }
     };
 
@@ -64,16 +83,55 @@ function App() {
                 <section className="footer">
                     <h1 className="title">Resultado</h1>
                     <div className="content ">
+                        <TableLagrange coordenadas={coordenadas} />
+                        <strong>Polinomio:</strong>
                         <div
                             dangerouslySetInnerHTML={{
-                                __html: htmlResult.polinomio,
+                                __html: resultCoordenadas.polinomio,
                             }}
                         ></div>
+                        <strong>R2:{resultCoordenadas.r2}</strong>
                     </div>
                 </section>
             )}
 
-            {method !== "lagrange" && (
+            {method === "aproximacion" && (
+                <section className="footer">
+                    <h1 className="title">Resultado</h1>
+                    <div className="content ">
+                        <TableAproximacionPolinomial
+                            coordenadas={coordenadas}
+                        />
+                        <h2>Formula:{resultCoordenadas.formula}</h2>
+                        <h2>R2:{resultCoordenadas.r2}</h2>
+                    </div>
+                </section>
+            )}
+
+            {method === "diferencias" && (
+                <section className="footer">
+                    <h1 className="title">Resultado</h1>
+                    <div className="content ">
+                        <TableDiferenciasDivididas
+                            coordenadas={coordenadas.map((item) => {
+                                return {
+                                    x: item[0],
+                                    y: item[1],
+                                };
+                            })}
+                        />
+                        <h2>Polinomio:</h2>
+                        <div
+                            dangerouslySetInnerHTML={{
+                                __html: resultCoordenadas.polinomio,
+                            }}
+                        ></div>
+                        <h2>R2:{resultCoordenadas.r2}</h2>
+                    </div>
+                </section>
+            )}
+
+            {!["lagrange", "aproximacion", "diferencias"].includes(method) && (
                 <section className="footer">
                     <h1 className="title">Tabla</h1>
                     <div className="content ">

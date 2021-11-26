@@ -21,6 +21,12 @@ const FormMethod = ({ getParams, clearTable }) => {
                 placeholder: "Ingrese el valor de X0",
             },
         },
+        aproximacion: {
+            input1: {
+                label: "Digite la presion:",
+                placeholder: "Digite la presion",
+            },
+        },
     };
 
     const [form, setForm] = useState({
@@ -39,9 +45,9 @@ const FormMethod = ({ getParams, clearTable }) => {
     const options = [
         { value: "biseccion", label: "Biseccion" },
         { value: "newton", label: "Newton Raphson" },
-        // { value: "jacobi", label: "Jacobi" },
-        // { value: "gauss", label: "Gauss - seides" },
+        { value: "aproximacion", label: "Aproximacion polinomial" },
         { value: "lagrange", label: "Polinomio de lagrange" },
+        { value: "diferencias", label: "Diferencias divididas" },
     ];
 
     const handleChangeForm = (value, field) => {
@@ -96,6 +102,41 @@ const FormMethod = ({ getParams, clearTable }) => {
             } catch (error) {
                 alert(error);
             }
+        } else if (form.method.value === "aproximacion") {
+            getParams({
+                input1: Number(form.input1),
+                method: form.method.value,
+                coordenadas: [
+                    {
+                        p: 1,
+                        t: 45,
+                    },
+                    {
+                        p: 5,
+                        t: 110,
+                    },
+                    {
+                        p: 10,
+                        t: 130,
+                    },
+                    {
+                        p: 15,
+                        t: 180,
+                    },
+                ],
+            });
+        } else if (form.method.value === "diferencias") {
+            getParams({
+                method: form.method.value,
+                coordenadas: [
+                    [-2, -18],
+                    [-1, -5],
+                    [0, -2],
+                    [2, -2],
+                    [3, 7],
+                    [6, 142],
+                ],
+            });
         } else {
             let validEquation = true;
             try {
@@ -129,7 +170,9 @@ const FormMethod = ({ getParams, clearTable }) => {
             <div className="card">
                 <div className="card-content">
                     <div className="content">
-                        {form.method.value != "lagrange" && (
+                        {!["lagrange", "aproximacion", "diferencias"].includes(
+                            form.method.value
+                        ) && (
                             <div className="field">
                                 <label className="label">Ecuacion</label>
                                 <div className="control">
